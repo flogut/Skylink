@@ -1,14 +1,15 @@
 package de.hgv.app
 
-import de.hgv.view.MainView
+import de.hgv.view.LoginScreen
 import tornadofx.*
 
-class Skylink: App(MainView::class, Styles::class) {
+class Skylink: App(LoginScreen::class, Styles::class) {
 
-    val api: Rest by inject()
+    val api: CloudlinkApi by inject()
 
     init {
-        api.baseURI = "localhost:7000"
+        Rest.useApacheHttpClient()
+        api.baseURI = "http://localhost:7000"
     }
 
 }
