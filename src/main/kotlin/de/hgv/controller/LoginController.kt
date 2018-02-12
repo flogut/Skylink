@@ -1,40 +1,63 @@
 package de.hgv.controller
 
 import de.hgv.app.CloudlinkApi
+import de.hgv.view.LoginScreen
+import de.hgv.view.MainView
+import javafx.beans.property.SimpleStringProperty
 import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.message.SimpleMessage
+import org.apache.logging.log4j.Logger
 import tornadofx.*
 
 class LoginController: Controller() {
 
-    val api: CloudlinkApi by inject()
+    private val api: CloudlinkApi by inject()
 
-    fun tryLogin(username: String, password: String): Boolean {
-        with(api) {
-            api.reset()
-            engine.setBasicAuth(username, password)
-            val response = get("login")
-            return try {
-                when {
-                    response.ok() -> {
-                        val token = String(response.content().readBytes())
-                        api.token = token
-                        true
-                    }
-                    response.statusCode == 401 -> false
-                    else -> {
-                        LOGGER.error { SimpleMessage("login returned ${response.statusCode} ${response.reason}") }
-                        false
-                    }
+    val statusProperty = SimpleStringProperty()
+    var status: String by statusProperty
+
+    fun tryLogin(username: String, password: String) {
+        runLater { status = "" }
+
+        api.setBasicAuth(username, password, true)
+
+        try {
+            val response = api.get("login")
+
+            if (response.ok()) {
+                api.token = String(response.content().readBytes())
+
+                with(config) {
+                    set("username" to username)
+                    set("password" to password)
+                    save()
                 }
-            } finally {
-                response.consume()
+
+                runLater(5.millis) {
+                    //TODO Add suitable Transition
+                    find(LoginScreen::class).replaceWith(MainView::class)
+                }
+            } else if (response.statusCode == 401) {
+                runLater {
+                    status = "Nutzername oder Passwort sind inkorrekt"
+                }
+            } else {
+                runLater {
+                    LOGGER.error("login returned ${response.statusCode} ${response.status.name}: ${response.reason}")
+                    status = "${response.status.name}: ${response.reason}"
+                }
+            }
+        } catch (exception: RestException) {
+            LOGGER.error("Login failed: ${exception.localizedMessage}")
+
+            //TODO Display German message
+            runLater {
+                status = "Login gescheitert: ${exception.localizedMessage}"
             }
         }
     }
 
     companion object {
-        val LOGGER = LogManager.getLogger(LoginController::class.java)
+        val LOGGER: Logger = LogManager.getLogger(LoginController::class.java)
     }
 
 }
