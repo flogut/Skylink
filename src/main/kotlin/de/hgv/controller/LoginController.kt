@@ -32,6 +32,7 @@ class LoginController: Controller() {
                     save()
                 }
 
+                //Delay is a workaround to make the overlay go away
                 runLater(5.millis) {
                     //TODO Add suitable Transition
                     find(LoginScreen::class).replaceWith(MainView::class)
