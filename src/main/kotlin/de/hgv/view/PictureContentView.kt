@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager
 import tornadofx.*
 
 
-class PictureContentView: View() {
+class PictureContentView: Fragment() {
 
     val api: CloudlinkApi by inject()
 

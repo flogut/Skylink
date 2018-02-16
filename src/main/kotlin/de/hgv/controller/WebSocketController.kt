@@ -1,6 +1,7 @@
 package de.hgv.controller
 
 import de.hgv.app.CloudlinkApi
+import de.hgv.websockets.DataWebSocket
 import de.hgv.websockets.PictureWebSocket
 import org.apache.logging.log4j.LogManager
 import org.eclipse.jetty.websocket.client.WebSocketClient
@@ -10,11 +11,12 @@ import kotlin.concurrent.thread
 
 class WebSocketController: Controller() {
 
-    val api: CloudlinkApi by inject()
+    private val api: CloudlinkApi by inject()
 
     val pictureWebSocket = PictureWebSocket()
+    val dataWebSocket = DataWebSocket()
 
-    val client = WebSocketClient()
+    private val client = WebSocketClient()
 
     private var shutdown: Boolean = false
 
@@ -24,7 +26,10 @@ class WebSocketController: Controller() {
                 client.start()
 
                 val pictureUri = URI("ws://${CloudlinkApi.BASE_URI}/receivePictures?token=${api.token}")
+                val dataUri = URI("ws://${CloudlinkApi.BASE_URI}/receiveData?token=${api.token}")
+
                 client.connect(pictureWebSocket, pictureUri)
+                client.connect(dataWebSocket, dataUri)
 
                 while (!shutdown) {
                     Thread.sleep(100)

@@ -3,16 +3,31 @@ package de.hgv.view
 import de.hgv.data.ContentType
 import javafx.beans.property.SimpleObjectProperty
 import tornadofx.*
-import java.util.concurrent.ThreadLocalRandom
 
 class ContentView(type: ContentType): Fragment() {
 
     val typeProperty = SimpleObjectProperty<ContentType>(type)
     var type by typeProperty
 
-    val number = ThreadLocalRandom.current().nextInt(0, 100)
+    var contentView: Fragment = getContentView(type)
 
     override val root = vbox {
-        add(PictureContentView())
+        add(contentView)
+    }
+
+    init {
+        typeProperty.onChange { newType ->
+            if (newType != null) {
+                contentView.removeFromParent()
+                contentView = getContentView(newType)
+                root.add(contentView)
+            }
+        }
+    }
+
+    private fun getContentView(type: ContentType) = when (type) {
+        ContentType.PICTURE -> find<PictureContentView>()
+        ContentType.HEIGHT -> find<DataContentView>(mapOf("type" to type))
+        ContentType.TEMPERATURE -> find<DataContentView>(mapOf("type" to type))
     }
 }
