@@ -13,8 +13,8 @@ class WebSocketController: Controller() {
 
     private val api: CloudlinkApi by inject()
 
-    val pictureWebSocket = PictureWebSocket()
-    val dataWebSocket = DataWebSocket()
+    val pictureWebSocket = PictureWebSocket(this)
+    val dataWebSocket = DataWebSocket(this)
 
     private val client = WebSocketClient()
 
@@ -24,14 +24,15 @@ class WebSocketController: Controller() {
         thread(true, true) {
             try {
                 client.start()
+                client.isStopAtShutdown = true
 
                 val pictureUri = URI("ws://${CloudlinkApi.BASE_URI}/receivePictures?token=${api.token}")
                 val dataUri = URI("ws://${CloudlinkApi.BASE_URI}/receiveData?token=${api.token}")
 
-                client.connect(pictureWebSocket, pictureUri)
-                client.connect(dataWebSocket, dataUri)
+                val pictureSession = client.connect(pictureWebSocket, pictureUri).get()
+                val dataSession = client.connect(dataWebSocket, dataUri).get()
 
-                while (!shutdown) {
+                while (!shutdown || client.isRunning || pictureSession.isOpen || dataSession.isOpen) {
                     Thread.sleep(100)
                 }
             } catch (exception: Exception) {
@@ -50,8 +51,38 @@ class WebSocketController: Controller() {
         shutdown = true
     }
 
+    fun reconnect(webSocket: WebSocket) {
+        thread(true, true) {
+            try {
+                if (webSocket == WebSocket.PICTURES) {
+                    val pictureUri = URI("ws://${CloudlinkApi.BASE_URI}/receivePictures?token=${api.token}")
+                    val pictureSession = client.connect(pictureWebSocket, pictureUri).get()
+
+                    while (!shutdown && client.isRunning && pictureSession.isOpen) {
+                        Thread.sleep(100)
+                    }
+                } else if (webSocket == WebSocket.DATA) {
+                    val dataUri = URI("ws://${CloudlinkApi.BASE_URI}/receiveData?token=${api.token}")
+                    val dataSession = client.connect(dataWebSocket, dataUri).get()
+
+                    while (!shutdown && client.isRunning && dataSession.isOpen) {
+                        Thread.sleep(100)
+                    }
+
+                    println("Ending thread")
+                }
+            } catch (exception: Exception) {
+                LOGGER.error("Error connecting to WebSockets: ${exception.localizedMessage}")
+            }
+        }
+    }
+
     companion object {
         private val LOGGER = LogManager.getLogger(WebSocketController::class.java)
+    }
+
+    enum class WebSocket {
+        PICTURES, DATA
     }
 
 }

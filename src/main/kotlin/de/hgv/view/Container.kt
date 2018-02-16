@@ -42,7 +42,6 @@ class Container(parent: Container? = null, splitOrientation: Orientation = Orien
                             combobox<ContentType>(contentView.typeProperty, ContentType.values().toList())
 
                             //TODO Add icons for buttons
-                            //TODO Unify height of header components
 
                             button("+") {
                                 enableWhen { innerChildProperty.isNull }

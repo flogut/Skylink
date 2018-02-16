@@ -2,6 +2,7 @@ package de.hgv.websockets
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import de.hgv.controller.WebSocketController
 import de.hgv.data.ContentType
 import de.hgv.model.Data
 import org.apache.logging.log4j.LogManager
@@ -12,7 +13,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage
 import org.eclipse.jetty.websocket.api.annotations.WebSocket
 
 @WebSocket(maxIdleTime = 1000 * 60 * 60 * 24)
-class DataWebSocket {
+class DataWebSocket(private val controller: WebSocketController) {
     private lateinit var session: Session
 
     private val listeners = hashMapOf<ContentType, MutableList<(Data) -> Unit>>()
@@ -28,7 +29,7 @@ class DataWebSocket {
     fun onClose(statusCode: Int, reason: String) {
         LOGGER.info("Conntection closed with code $statusCode: $reason")
 
-        //TODO Reconnect
+        controller.reconnect(WebSocketController.WebSocket.DATA)
     }
 
     @OnWebSocketMessage
