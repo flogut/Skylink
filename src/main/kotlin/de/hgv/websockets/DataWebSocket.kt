@@ -11,7 +11,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage
 import org.eclipse.jetty.websocket.api.annotations.WebSocket
 
-@WebSocket
+@WebSocket(maxIdleTime = 1000 * 60 * 60 * 24)
 class DataWebSocket {
     private lateinit var session: Session
 

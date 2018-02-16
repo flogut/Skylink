@@ -40,15 +40,7 @@ class PictureWebSocket {
     fun onMessage(message: String) {
         val mapper = jacksonObjectMapper()
 
-        val pic = mapper.readValue<Picture>(message)
-
-        with(pic) {
-            picture.id = id
-            picture.time = time
-            picture.type = type
-        }
-
-        LOGGER.debug(picture)
+        picture = mapper.readValue<Picture>(message)
     }
 
     companion object {
