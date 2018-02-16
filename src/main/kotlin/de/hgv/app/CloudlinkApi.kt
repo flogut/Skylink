@@ -8,7 +8,7 @@ class CloudlinkApi: Rest() {
 
     init {
         Rest.useApacheHttpClient()
-        baseURI = "http://localhost:7000"
+        baseURI = "http://$BASE_URI"
     }
 
     fun setBasicAuth(username: String, password: String, reset: Boolean) {
@@ -17,5 +17,11 @@ class CloudlinkApi: Rest() {
         }
 
         setBasicAuth(username, password)
+    }
+
+    companion object {
+
+        const val BASE_URI = "localhost:7000"
+
     }
 }

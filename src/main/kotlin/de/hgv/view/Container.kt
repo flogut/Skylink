@@ -1,5 +1,6 @@
 package de.hgv.view
 
+import de.hgv.data.ContentType
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Orientation
 import javafx.scene.control.SplitPane
@@ -24,6 +25,8 @@ class Container(parent: Container? = null, splitOrientation: Orientation = Orien
     private val outerChildProperty = SimpleObjectProperty<Container>()
     private var outerChild: Container? by outerChildProperty
 
+    private val contentView = ContentView(ContentType.PICTURE)
+
 
     override val root = splitpane {
         orientationProperty().bind(splitOrientationProperty)
@@ -34,33 +37,37 @@ class Container(parent: Container? = null, splitOrientation: Orientation = Orien
             orientationProperty().bind(innerSplitOrientationProperty)
             borderpane {
                 top {
-                    hbox {
-                        combobox<String> {
-                            //TODO Add content types to combobox
-                            //TODO Notify contentView on change
-                        }
+                    vbox(3.0) {
+                        hbox {
+                            combobox<ContentType>(contentView.typeProperty, ContentType.values().toList())
 
-                        //TODO Add icons for buttons
+                            //TODO Add icons for buttons
+                            //TODO Unify height of header components
 
-                        button("+") {
-                            enableWhen { innerChildProperty.isNull }
+                            button("+") {
+                                enableWhen { innerChildProperty.isNull }
 
-                            setOnAction {
-                                addChild()
+                                setOnAction {
+                                    addChild()
+                                }
+                            }
+
+                            button("X") {
+                                enableWhen { parentProperty.isNotNull }
+
+                                setOnAction {
+                                    closeContainer()
+                                }
                             }
                         }
 
-                        button("X") {
-                            enableWhen { parentProperty.isNotNull }
-
-                            setOnAction {
-                                closeContainer()
-                            }
-                        }
+                        separator(Orientation.HORIZONTAL)
                     }
                 }
 
-                center(ContainerContentView::class)
+                center {
+                    add(contentView)
+                }
             }
         }
 
