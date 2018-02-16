@@ -57,9 +57,20 @@ class PictureContentView: Fragment() {
     init {
         pictureProperty.select { it.idProperty }.onChange { id ->
             runAsync {
-                api.get("pictures/$id")
-            } ui { response ->
-                image = Image(response.content())
+                try {
+                    true to api.get("pictures/$id")
+                } catch (exception: RestException) {
+                    LOGGER.error("Downloading data failed: ${exception.localizedMessage}")
+
+                    runLater {
+                        error("Daten konnten nicht heruntergeladen werden", exception.localizedMessage)
+                    }
+                    false to null
+                }
+            } ui { (success, response) ->
+                if (success && response != null) {
+                    image = Image(response.content())
+                }
             }
         }
 
