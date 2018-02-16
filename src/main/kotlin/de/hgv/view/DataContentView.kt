@@ -8,16 +8,16 @@ import javafx.scene.chart.NumberAxis
 import tornadofx.*
 
 class DataContentView: Fragment() {
-    val type = params["type"] as ContentType
+    private val type = params["type"] as ContentType
 
-    val webSocketController: WebSocketController by inject()
+    private val webSocketController: WebSocketController by inject()
 
-    val dataWebSocket = webSocketController.dataWebSocket
-    var chart: LineChart<Number, Number> by singleAssign()
+    private val dataWebSocket = webSocketController.dataWebSocket
+    private var chart: LineChart<Number, Number> by singleAssign()
 
-    val dataController: DataController by inject()
+    private val dataController: DataController by inject()
 
-    val dataList = mutableListOf<Pair<Number, Number>>().observable()
+    private val dataList = mutableListOf<Pair<Number, Number>>().observable()
 
     override val root = vbox {
         chart = linechart(type.toString(), NumberAxis(), NumberAxis()) {

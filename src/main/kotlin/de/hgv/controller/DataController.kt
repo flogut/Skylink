@@ -10,7 +10,7 @@ import tornadofx.*
 
 class DataController: Controller() {
 
-    val api: CloudlinkApi by inject()
+    private val api: CloudlinkApi by inject()
 
     fun downloadData(type: ContentType): List<Data> {
         return try {

@@ -7,9 +7,9 @@ import tornadofx.*
 class ContentView(type: ContentType): Fragment() {
 
     val typeProperty = SimpleObjectProperty<ContentType>(type)
-    var type by typeProperty
+    var type: ContentType by typeProperty
 
-    var contentView: Fragment = getContentView(type)
+    private var contentView: Fragment = getContentView(type)
 
     override val root = vbox {
         add(contentView)

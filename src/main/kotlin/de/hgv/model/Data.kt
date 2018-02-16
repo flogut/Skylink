@@ -10,15 +10,15 @@ import java.util.*
 class Data {
 
     val idProperty = SimpleStringProperty()
-    var id by idProperty
+    var id: String by idProperty
 
     val typeProperty = SimpleObjectProperty<ContentType>()
-    var type by typeProperty
+    var type: ContentType by typeProperty
 
     val valueProperty = SimpleDoubleProperty()
     var value by valueProperty
 
     val timeProperty = SimpleObjectProperty<Date>()
-    var time by timeProperty
+    var time: Date by timeProperty
 
 }

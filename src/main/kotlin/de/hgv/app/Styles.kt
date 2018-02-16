@@ -3,7 +3,7 @@ package de.hgv.app
 import javafx.scene.text.FontWeight
 import tornadofx.*
 
-class Styles : Stylesheet() {
+class Styles: Stylesheet() {
     companion object {
         val heading by cssclass()
     }

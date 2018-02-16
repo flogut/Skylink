@@ -15,12 +15,12 @@ import tornadofx.*
 
 // maxIdleTime = 1 day
 @WebSocket(maxBinaryMessageSize = 5 * 1024 * 1024, maxIdleTime = 1000 * 60 * 60 * 24)
-class PictureWebSocket(val controller: WebSocketController) {
+class PictureWebSocket(private val controller: WebSocketController) {
 
     private lateinit var session: Session
 
     val pictureProperty = SimpleObjectProperty<Picture>(Picture())
-    var picture by pictureProperty
+    var picture: Picture by pictureProperty
 
 
     @OnWebSocketConnect
@@ -41,7 +41,7 @@ class PictureWebSocket(val controller: WebSocketController) {
     fun onMessage(message: String) {
         val mapper = jacksonObjectMapper()
 
-        picture = mapper.readValue<Picture>(message)
+        picture = mapper.readValue(message)
     }
 
     companion object {

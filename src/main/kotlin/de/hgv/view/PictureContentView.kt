@@ -13,17 +13,17 @@ import tornadofx.*
 
 class PictureContentView: Fragment() {
 
-    val api: CloudlinkApi by inject()
+    private val api: CloudlinkApi by inject()
 
-    val webSocketController: WebSocketController by inject()
-    val pictureWebSocket = webSocketController.pictureWebSocket
+    private val webSocketController: WebSocketController by inject()
+    private val pictureWebSocket = webSocketController.pictureWebSocket
 
-    val pictureProperty = pictureWebSocket.pictureProperty
+    private val pictureProperty = pictureWebSocket.pictureProperty
 
-    val imageProperty = SimpleObjectProperty<Image>()
-    var image by imageProperty
+    private val imageProperty = SimpleObjectProperty<Image>()
+    private var image: Image by imageProperty
 
-    var imageView by singleAssign<ImageView>()
+    private var imageView by singleAssign<ImageView>()
 
     override val root = hbox(alignment = Pos.TOP_CENTER) {
         useMaxSize = true

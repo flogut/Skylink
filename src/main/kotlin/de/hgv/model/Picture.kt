@@ -8,16 +8,16 @@ import java.util.*
 
 class Picture {
     val idProperty = SimpleStringProperty()
-    var id by idProperty
+    var id: String by idProperty
 
     val timeProperty = SimpleObjectProperty<Date>()
-    var time by timeProperty
+    var time: Date by timeProperty
 
     val typeProperty = SimpleStringProperty()
-    var type by typeProperty
+    var type: String by typeProperty
 
     val urlProperty = SimpleStringProperty("http://${CloudlinkApi.BASE_URI}/picture")
-    var url by urlProperty
+    var url: String by urlProperty
 
     init {
         idProperty.onChange { newId ->
