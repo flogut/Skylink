@@ -55,7 +55,6 @@ class PictureContentView: Fragment() {
     }
 
     init {
-        //TODO Add error handling
         pictureProperty.select { it.idProperty }.onChange { id ->
             runAsync {
                 api.get("pictures/$id")
@@ -65,13 +64,24 @@ class PictureContentView: Fragment() {
         }
 
         imageView.runAsyncWithOverlay {
-            api.get("picture")
-        } ui { response ->
-            image = Image(response.content())
+            try {
+                true to api.get("picture")
+            } catch (exception: RestException) {
+                LOGGER.error("Downloading data failed: ${exception.localizedMessage}")
+
+                runLater {
+                    error("Daten konnten nicht heruntergeladen werden", exception.localizedMessage)
+                }
+                false to null
+            }
+        } ui { (success, response) ->
+            if (success && response != null) {
+                image = Image(response.content())
+            }
         }
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger()
+        private val LOGGER = LogManager.getLogger(PictureContentView::class.java)
     }
 }
