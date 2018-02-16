@@ -3,12 +3,8 @@ package de.hgv.view
 import de.hgv.controller.DataController
 import de.hgv.controller.WebSocketController
 import de.hgv.data.ContentType
-import javafx.collections.ListChangeListener
-import javafx.collections.ObservableList
-import javafx.scene.chart.CategoryAxis
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.NumberAxis
-import javafx.scene.chart.XYChart
 import tornadofx.*
 
 class DataContentView: Fragment() {
@@ -17,49 +13,34 @@ class DataContentView: Fragment() {
     val webSocketController: WebSocketController by inject()
 
     val dataWebSocket = webSocketController.dataWebSocket
-    var chart: LineChart<String, Number> by singleAssign()
+    var chart: LineChart<Number, Number> by singleAssign()
 
     val dataController: DataController by inject()
 
-    val dataList = mutableListOf<Pair<String, Number>>().observable()
+    val dataList = mutableListOf<Pair<Number, Number>>().observable()
 
     override val root = vbox {
-        chart = linechart(type.toString(), CategoryAxis(), NumberAxis()) {
-            //TODO Use Custom X Axis that doesn't show the date
+        chart = linechart(type.toString(), NumberAxis(), NumberAxis()) {
             useMaxSize = true
             animated = false
 
             data(type.toString(), dataList)
+
+            xAxis.isTickLabelsVisible = false
+            xAxis.isAutoRanging = true
+            (xAxis as NumberAxis).isForceZeroInRange = false
         }
     }
 
     init {
         dataWebSocket.onType(type) { data ->
-            dataList.add(data.time.toString() to data.value)
+            dataList.add(data.time.time to data.value)
         }
 
-        runAsync {
+        chart.runAsyncWithOverlay {
             dataController.downloadData(type)
         } ui { data ->
-            data.mapTo(dataList) { it.time.toString() to it.value }
-        }
-    }
-
-    private fun <X, Y> XYChart<X, Y>.data(seriesName: String, data: ObservableList<Pair<X, Y>>) {
-        data.addListener { change: ListChangeListener.Change<out Pair<X, Y>> ->
-            if (change.next()) {
-                runLater {
-                    val series = this.data.find { it.name == seriesName }
-                    val addition = change.addedSubList.first()
-                    if (series != null) {
-                        series.data.add(XYChart.Data(addition.first, addition.second))
-                    } else {
-                        series(seriesName) {
-                            data(addition.first, addition.second)
-                        }
-                    }
-                }
-            }
+            data.mapTo(dataList) { it.time.time to it.value }
         }
     }
 }

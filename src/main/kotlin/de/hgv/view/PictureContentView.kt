@@ -64,7 +64,7 @@ class PictureContentView: Fragment() {
             }
         }
 
-        runAsync {
+        imageView.runAsyncWithOverlay {
             api.get("picture")
         } ui { response ->
             image = Image(response.content())
