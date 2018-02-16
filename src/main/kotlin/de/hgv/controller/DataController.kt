@@ -13,7 +13,7 @@ class DataController: Controller() {
 
     fun downloadData(type: ContentType): List<Data> {
         //TODO Add error handling
-        val response = api.get("data?type=${type.toString().toLowerCase()}")
+        val response = api.get("data?type=${type.getApiType()}")
 
         val mapper = jacksonObjectMapper()
 

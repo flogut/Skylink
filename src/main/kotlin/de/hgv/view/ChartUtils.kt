@@ -4,7 +4,6 @@ import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.scene.chart.XYChart
 import tornadofx.*
-import java.util.*
 
 fun <X, Y> XYChart<X, Y>.data(seriesName: String, data: ObservableList<Pair<X, Y>>) {
     data.addListener { change: ListChangeListener.Change<out Pair<X, Y>> ->
@@ -22,10 +21,4 @@ fun <X, Y> XYChart<X, Y>.data(seriesName: String, data: ObservableList<Pair<X, Y
             }
         }
     }
-}
-
-class MyDate: Date() {
-
-    override fun toString() = ""
-
 }

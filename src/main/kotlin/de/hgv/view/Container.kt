@@ -39,7 +39,6 @@ class Container(parent: Container? = null, splitOrientation: Orientation = Orien
                 top {
                     vbox(3.0) {
                         hbox {
-                            //TODO Translate Content types to German
                             combobox<ContentType>(contentView.typeProperty, ContentType.values().toList())
 
                             //TODO Add icons for buttons
