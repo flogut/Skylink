@@ -32,14 +32,20 @@ class WebSocketController: Controller() {
                 val pictureSession = client.connect(pictureWebSocket, pictureUri).get()
                 val dataSession = client.connect(dataWebSocket, dataUri).get()
 
-                while (!shutdown || client.isRunning || pictureSession.isOpen || dataSession.isOpen) {
+                while (!shutdown && (client.isRunning || pictureSession.isOpen || dataSession.isOpen)) {
                     Thread.sleep(100)
                 }
             } catch (exception: Exception) {
                 LOGGER.error("Error connecting to WebSockets: ${exception.localizedMessage}")
+
+                runLater {
+                    error("Verbindung zum Server konnte nicht aufgebaut werden", exception.localizedMessage)
+                }
             } finally {
                 try {
-                    client.stop()
+                    if (shutdown) {
+                        client.stop()
+                    }
                 } catch (exception: Exception) {
                     LOGGER.error("Error stopping WebSocket: ${exception.localizedMessage}")
                 }
@@ -73,6 +79,10 @@ class WebSocketController: Controller() {
                 }
             } catch (exception: Exception) {
                 LOGGER.error("Error connecting to WebSockets: ${exception.localizedMessage}")
+
+                runLater {
+                    error("Verbindung zum Server konnte nicht aufgebaut werden", exception.localizedMessage)
+                }
             }
         }
     }
