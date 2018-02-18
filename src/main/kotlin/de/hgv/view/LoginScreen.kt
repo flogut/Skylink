@@ -9,8 +9,8 @@ class LoginScreen: View("Skylink") {
 
     private val loginController: LoginController by inject()
     private val model = ViewModel()
-    private val username = model.bind { SimpleStringProperty(this, "username", config.string("username")) }
-    private val password = model.bind { SimpleStringProperty(this, "password", config.string("password")) }
+    private val username = model.bind { SimpleStringProperty(this, "username", app.config.string("username")) }
+    private val password = model.bind { SimpleStringProperty(this, "password", app.config.string("password")) }
 
     private var loginButton: Button by singleAssign()
 

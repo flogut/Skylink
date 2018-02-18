@@ -26,7 +26,7 @@ class LoginController: Controller() {
             if (response.ok()) {
                 api.token = String(response.content().readBytes())
 
-                with(config) {
+                with(app.config) {
                     set("username" to username)
                     set("password" to password)
                     save()

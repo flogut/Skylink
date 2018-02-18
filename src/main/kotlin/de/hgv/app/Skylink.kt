@@ -8,6 +8,11 @@ class Skylink: App(LoginScreen::class, Styles::class) {
 
     private val webSocketController: WebSocketController by inject()
 
+
+    init {
+        importStylesheet("/stylesheet.css")
+    }
+
     override fun stop() {
         super.stop()
         webSocketController.shutdown()
