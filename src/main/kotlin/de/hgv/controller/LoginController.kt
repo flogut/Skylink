@@ -15,7 +15,7 @@ class LoginController: Controller() {
     val statusProperty = SimpleStringProperty()
     var status: String by statusProperty
 
-    fun tryLogin(username: String, password: String) {
+    fun tryLogin(username: String, password: String, stayLoggedIn: Boolean) {
         runLater { status = "" }
 
         api.setBasicAuth(username, password, true)
@@ -27,8 +27,14 @@ class LoginController: Controller() {
                 api.token = String(response.content().readBytes())
 
                 with(app.config) {
-                    set("username" to username)
-                    set("password" to password)
+                    if (stayLoggedIn) {
+                        set("username" to username)
+                        set("password" to password)
+                    } else {
+                        remove("username")
+                        remove("password")
+                    }
+                    set("stayLoggedIn" to stayLoggedIn)
                     save()
                 }
 
