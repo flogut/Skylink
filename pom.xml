@@ -13,6 +13,7 @@
         <kotlin.version>1.2.21</kotlin.version>
         <tornadofx.version>1.7.14</tornadofx.version>
         <main.class>de.hgv.app.Skylink</main.class>
+        <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
     </properties>
 
     <dependencies>
@@ -23,7 +24,7 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
