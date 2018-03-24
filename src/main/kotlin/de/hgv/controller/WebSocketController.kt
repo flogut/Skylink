@@ -55,33 +55,41 @@ class WebSocketController: Controller() {
 
     fun shutdown() {
         shutdown = true
+
+        for (session in client.openSessions) {
+            session.disconnect()
+        }
+
+        client.stop()
     }
 
     fun reconnect(webSocket: WebSocket) {
-        thread(true, true) {
-            try {
-                if (webSocket == WebSocket.PICTURES) {
-                    val pictureUri = URI("ws://${CloudlinkApi.BASE_URI}/receivePictures?token=${api.token}")
-                    val pictureSession = client.connect(pictureWebSocket, pictureUri).get()
+        if (!shutdown) {
+            thread(true, true) {
+                try {
+                    if (webSocket == WebSocket.PICTURES) {
+                        val pictureUri = URI("ws://${CloudlinkApi.BASE_URI}/receivePictures?token=${api.token}")
+                        val pictureSession = client.connect(pictureWebSocket, pictureUri).get()
 
-                    while (!shutdown && client.isRunning && pictureSession.isOpen) {
-                        Thread.sleep(100)
+                        while (!shutdown && client.isRunning && pictureSession.isOpen) {
+                            Thread.sleep(100)
+                        }
+                    } else if (webSocket == WebSocket.DATA) {
+                        val dataUri = URI("ws://${CloudlinkApi.BASE_URI}/receiveData?token=${api.token}")
+                        val dataSession = client.connect(dataWebSocket, dataUri).get()
+
+                        while (!shutdown && client.isRunning && dataSession.isOpen) {
+                            Thread.sleep(100)
+                        }
+
+                        println("Ending thread")
                     }
-                } else if (webSocket == WebSocket.DATA) {
-                    val dataUri = URI("ws://${CloudlinkApi.BASE_URI}/receiveData?token=${api.token}")
-                    val dataSession = client.connect(dataWebSocket, dataUri).get()
+                } catch (exception: Exception) {
+                    LOGGER.error("Error connecting to WebSockets: ${exception.localizedMessage}")
 
-                    while (!shutdown && client.isRunning && dataSession.isOpen) {
-                        Thread.sleep(100)
+                    runLater {
+                        error("Verbindung zum Server konnte nicht aufgebaut werden", exception.localizedMessage)
                     }
-
-                    println("Ending thread")
-                }
-            } catch (exception: Exception) {
-                LOGGER.error("Error connecting to WebSockets: ${exception.localizedMessage}")
-
-                runLater {
-                    error("Verbindung zum Server konnte nicht aufgebaut werden", exception.localizedMessage)
                 }
             }
         }

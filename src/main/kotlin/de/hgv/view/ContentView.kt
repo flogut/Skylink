@@ -27,7 +27,7 @@ class ContentView(type: ContentType): Fragment() {
 
     private fun getContentView(type: ContentType) = when (type) {
         ContentType.PICTURE -> find<PictureContentView>()
-        ContentType.HEIGHT -> find<DataContentView>(mapOf("type" to type))
-        ContentType.TEMPERATURE -> find<DataContentView>(mapOf("type" to type))
+        ContentType.MAP -> find<MapContentView>()
+        else -> find<DataContentView>(mapOf("type" to type))
     }
 }

@@ -39,7 +39,9 @@ class Container(parent: Container? = null, splitOrientation: Orientation = Orien
                 top {
                     vbox(3.0) {
                         hbox {
-                            combobox<ContentType>(contentView.typeProperty, ContentType.values().toList())
+                            combobox<ContentType>(
+                                contentView.typeProperty,
+                                ContentType.values().toList().filterNot { it == ContentType.LATITUDE || it == ContentType.LONGITUDE })
 
                             //TODO Add icons for buttons
 

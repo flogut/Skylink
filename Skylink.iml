@@ -72,8 +72,9 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.9.0" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.9.4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0" level="project" />
-    <orderEntry type="library" name="Maven: com.lynden:GMapsFX:2.12.0" level="project" />
-    <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.2.1" level="project" />
-    <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.2.1" level="project" />
+    <orderEntry type="library" name="Maven: com.gluonhq:maps:1.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.gluonhq:charm-down-plugin-storage:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.gluonhq:charm-down-core:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.gluonhq:charm-down-plugin-position:3.0.0" level="project" />
   </component>
 </module>
