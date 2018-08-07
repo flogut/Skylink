@@ -41,7 +41,7 @@ class Container(parent: Container? = null, splitOrientation: Orientation = Orien
                         hbox {
                             combobox<ContentType>(
                                 contentView.typeProperty,
-                                ContentType.values().toList().filterNot { it == ContentType.LATITUDE || it == ContentType.LONGITUDE })
+                                ContentType.values().toList().filterNot { it.isInternal() })
 
                             //TODO Add icons for buttons
 
@@ -137,10 +137,9 @@ class Container(parent: Container? = null, splitOrientation: Orientation = Orien
         }
 
         if (removedOuter) {
-            innerChild?.let {
-                val ic = it
-                removeChild(it)
-                addChild(ic)
+            innerChild?.let { inner ->
+                removeChild(inner)
+                addChild(inner)
             }
         }
 

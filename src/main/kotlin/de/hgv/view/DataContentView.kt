@@ -34,13 +34,13 @@ class DataContentView: Fragment() {
 
     init {
         dataWebSocket.onType(type) { data ->
-            dataList.add(data.time.time to data.value)
+            dataList.add(data.timeMillis to data.value)
         }
 
         chart.runAsyncWithOverlay {
-            dataController.downloadData(type)
+            dataController.getData(type)
         } ui { data ->
-            data.mapTo(dataList) { it.time.time to it.value }
+            data.mapTo(dataList) { it.timeMillis to it.value }
         }
     }
 }
