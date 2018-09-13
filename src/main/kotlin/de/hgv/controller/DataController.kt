@@ -17,6 +17,7 @@ class DataController: Controller() {
 
     private var mode: Mode = Mode.DOWNLOAD
     private var file: File? = null
+    private var secondFile: File? = null
     private var fileType: FileType? = null
 
     fun getData(type: ContentType): List<Data> = when (mode) {
@@ -24,9 +25,10 @@ class DataController: Controller() {
         Mode.FILE -> getFromFile(type)
     }
 
-    fun loadFromFile(file: File) {
+    fun loadFromFile(file: File, secondFile: File? = null) {
         mode = Mode.FILE
         this.file = file
+        this.secondFile = secondFile
         this.fileType = FileType.of(file)
     }
 
@@ -103,11 +105,31 @@ class DataController: Controller() {
                         .filter { it.size == 2 }
                         .map { types[it[0]] to it[1] }
                         .filterNot { it.first == null }
-                        .toMap()
+                        .toMap().toMutableMap()
                 } ?: return emptyList()
+
+        val second =
+            secondFile
+                ?.readLines()
+                ?.filter { it.isNotBlank() }
+                ?.map { it.removeSuffix("\\").removeSuffix("}") }
+                ?.map { line ->
+                    line
+                        .split(",")
+                        .map { it.split(":") }
+                        .filter { it.size == 2 }
+                        .map { types[it[0]] to it[1] }
+                        .filterNot { it.first == null }
+                        .toMap()
+                }
+                ?.associateBy { it[ContentType.DATACOUNTER] }
 
         val dataList = mutableListOf<Data>()
         for (line in lines) {
+            if (second?.get(line[ContentType.DATACOUNTER]) != null) {
+                line.putAll(second[line[ContentType.DATACOUNTER]] ?: mapOf())
+            }
+
             val value = line[type]?.toDoubleOrNull() ?: continue
 
             val date = line[ContentType.TIME]

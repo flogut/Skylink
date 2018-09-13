@@ -20,7 +20,7 @@ class MainView: View("Skylink") {
             if (e.isControlDown && e.code == KeyCode.O) {
                 e.consume()
 
-                val dialog = Dialog<String>()
+                val dialog = Dialog<Pair<String, String?>>()
                 dialog.title = "Lade Datei"
                 dialog.headerText = "Lade Daten aus Datei"
 
@@ -31,8 +31,10 @@ class MainView: View("Skylink") {
                         isWrapText = true
                     }
 
+                    val pathProperty = SimpleStringProperty()
+                    val secondFileProperty = SimpleStringProperty()
+
                     hbox(spacing = 5.0) {
-                        val pathProperty = SimpleStringProperty()
 
                         textfield(pathProperty)
 
@@ -53,13 +55,35 @@ class MainView: View("Skylink") {
                                 }
                             }
                         }
+                    }
 
-                        dialog.setResultConverter { buttonType ->
-                            if (buttonType == ButtonType.OK) {
-                                pathProperty.value
-                            } else {
-                                null
+                    hbox(spacing = 5.0) {
+                        textfield(secondFileProperty)
+
+                        button("Datei auswählen") {
+                            setOnAction {
+                                val files = chooseFile(
+                                    "Datei auswählen",
+                                    arrayOf(
+                                        FileChooser.ExtensionFilter(
+                                            "Text-Dateien",
+                                            "*.txt", "*.csv"
+                                        )
+                                    )
+                                )
+
+                                if (files.isNotEmpty()) {
+                                    secondFileProperty.value = files[0].path
+                                }
                             }
+                        }
+                    }
+
+                    dialog.setResultConverter { buttonType ->
+                        if (buttonType == ButtonType.OK) {
+                            pathProperty.value to secondFileProperty.value
+                        } else {
+                            null
                         }
                     }
                 }
@@ -72,10 +96,11 @@ class MainView: View("Skylink") {
 
                 if (result.isPresent) {
                     val path = result.get()
-                    val file = File(path)
+                    val file = File(path.first)
+                    val secondFile = File(path.second)
 
                     if (file.exists()) {
-                        dataController.loadFromFile(file)
+                        dataController.loadFromFile(file, secondFile)
                     }
                 }
             }
