@@ -97,7 +97,7 @@ class MainView: View("Skylink") {
                 if (result.isPresent) {
                     val path = result.get()
                     val file = File(path.first)
-                    val secondFile = File(path.second)
+                    val secondFile = path.second?.let { File(it) }
 
                     if (file.exists()) {
                         dataController.loadFromFile(file, secondFile)
