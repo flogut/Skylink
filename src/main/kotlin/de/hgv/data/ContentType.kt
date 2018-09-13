@@ -1,7 +1,7 @@
 package de.hgv.data
 
 enum class ContentType {
-    PICTURE, MAP, HEIGHT, TEMPERATURE, LATITUDE, LONGITUDE, PRESSURE, DUST, VOLTAGE, INTERNAL_TEMPERATURE, TIME;
+    PICTURE, MAP, HEIGHT, TEMPERATURE, LATITUDE, LONGITUDE, PRESSURE, DUST, VOLTAGE, INTERNAL_TEMPERATURE, TIME, DATACOUNTER;
 
     override fun toString() = when (this) {
         PICTURE -> "Bilder"
@@ -15,6 +15,7 @@ enum class ContentType {
         VOLTAGE -> "Spannung"
         INTERNAL_TEMPERATURE -> "Interne Temperatur"
         TIME -> "Zeit"
+        DATACOUNTER -> "Datacounter"
     }
 
     fun getApiType() = super.toString().toLowerCase().replace(' ', '_')
@@ -23,6 +24,7 @@ enum class ContentType {
         LATITUDE -> true
         LONGITUDE -> true
         TIME -> true
+        DATACOUNTER -> true
         else -> false
     }
 }

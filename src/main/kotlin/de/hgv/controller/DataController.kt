@@ -52,7 +52,7 @@ class DataController: Controller() {
         return when (fileType) {
             FileType.SINGLE -> getFromFileSingle(type)
             FileType.MULTIPLE -> getFromFileMultiple(type)
-            null -> emptyList()
+            null -> getFromFileMultiple(type)
         }
     }
 
@@ -81,12 +81,13 @@ class DataController: Controller() {
             "T" to ContentType.TEMPERATURE,
             "P" to ContentType.PRESSURE,
             "D" to ContentType.DUST,
-            "VO" to ContentType.VOLTAGE,
+            "Vo" to ContentType.VOLTAGE,
             "LA" to ContentType.LATITUDE,
             "LO" to ContentType.LONGITUDE,
             "TI" to ContentType.TIME,
             "H" to ContentType.HEIGHT,
-            "TC" to ContentType.INTERNAL_TEMPERATURE
+            "IT" to ContentType.INTERNAL_TEMPERATURE,
+            "DC" to ContentType.DATACOUNTER
         )
 
         val lines =
@@ -109,13 +110,18 @@ class DataController: Controller() {
         for (line in lines) {
             val value = line[type]?.toDoubleOrNull() ?: continue
 
-            val date = line[ContentType.TIME] ?: continue
-            val simpleDateFormat = when (date.count { it == ';' }) {
-                2 -> SimpleDateFormat("hh;mm;ss")
-                3 -> SimpleDateFormat("hh;mm;ss;SSS")
-                else -> null
-            } ?: continue
-            val time = simpleDateFormat.parse(line[ContentType.TIME])
+            val date = line[ContentType.TIME]
+
+            val time = if (date != null) {
+                val simpleDateFormat = when (date.count { it == ';' }) {
+                    2 -> SimpleDateFormat("hh;mm;ss")
+                    3 -> SimpleDateFormat("hh;mm;ss;SSS")
+                    else -> null
+                } ?: continue
+                simpleDateFormat.parse(date)
+            } else {
+                Date(50 * (line[ContentType.DATACOUNTER]?.toLong() ?: 0))
+            }
 
             val id = UUID.randomUUID().toString()
 
