@@ -5,6 +5,7 @@ import com.gluonhq.charm.down.Services
 import com.gluonhq.charm.down.plugins.StorageService
 import de.hgv.controller.WebSocketController
 import de.hgv.view.MainView
+import javafx.application.Application
 import javafx.scene.image.Image
 import tornadofx.*
 import java.io.File
@@ -51,4 +52,8 @@ class Skylink: App(Image(Skylink::class.java.getResourceAsStream("/icon.png")), 
         System.exit(0)
     }
 
+}
+
+fun main(args: Array<String>) {
+    Application.launch(Skylink::class.java)
 }

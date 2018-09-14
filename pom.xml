@@ -10,9 +10,9 @@
     <packaging>jar</packaging>
 
     <properties>
-        <kotlin.version>1.2.30</kotlin.version>
+        <kotlin.version>1.2.40</kotlin.version>
         <tornadofx.version>1.7.14</tornadofx.version>
-        <main.class>de.hgv.app.Skylink</main.class>
+        <main.class>de.hgv.app.SkylinkKt</main.class>
         <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
     </properties>
 
